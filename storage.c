@@ -44,9 +44,11 @@ channel_t *get_channel(channel_list_t *channels, const char *name) {
 
 	// iterate through channel list and return channel based on name if it exists
 	for (channel_t *c = channels->head; c != NULL; c = c->next) {
-		if (c->name == name) {
-			return c;
-		}
+		// if (strcmp(c->name, name) == 0) {
+		// 	return c;
+		// }
+		printf("gamers");
+		return c;
 	}
 
 	return NULL;

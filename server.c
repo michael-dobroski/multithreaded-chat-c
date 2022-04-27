@@ -19,8 +19,10 @@
 void run_server(int sockfd, int num_threads) {
     struct sockaddr_in cli;
     socklen_t len = sizeof(cli);
-	char buffer[1024] = { 0 };
+	char packet[256] = { 0 };
 	int valread;
+	char delim[] = " ";
+	char out[256] = { 0 };
 
     while(1) {
         // Accept the data packet from client and verification
@@ -30,10 +32,39 @@ void run_server(int sockfd, int num_threads) {
             exit(0);
         } else {
             printf("server accept the client...\n");
-			valread = read(client_socket, buffer, 1024);
-			printf("%s\n", buffer);
-			send(client_socket, buffer, strlen(buffer), 0);
-			// implement the communication with the client
+
+			// read client packet
+			valread = read(client_socket, packet, 256);
+
+			// print packet contents
+			printf("Packet contents -> %s\n", packet);
+
+			// parse and evaluate packet
+			char *ptr = strtok(packet, delim);
+			while (ptr != NULL) {
+				printf("%s\n", ptr);
+				if (strcmp(ptr, "0") == 0) { // client requests message retrieval
+					printf("wtf");
+					ptr = strtok(NULL, delim);
+					const char *channel_name;
+					channel_name = ptr;
+					printf("hi");
+					channel_t *c = get_channel(get_channels(), channel_name);
+					if (c == NULL) {
+						printf("TODO: channel does not exist\n");
+						exit(0);
+					}
+					ptr = strtok(NULL, delim);
+					char *trash;
+					long msg_id;
+					msg_id = strtoul(ptr, &trash, 10);
+					message_t *m = get_message(c, msg_id);
+					strcpy(out, m->text);
+				}
+			}
+
+			send(client_socket, out, strlen(out), 0);
+		
         }
     }
 }

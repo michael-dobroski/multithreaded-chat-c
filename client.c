@@ -13,21 +13,79 @@
 // retrieve the message from the channel with name equal to channel name
 // returns 0 if channel and message were found, otherwise -1.
 int retrieve_message(int socket, const char *channel_name, message_id_t msg_id) {
-	int valread;
-	char buffer[1024] = { 0 };
 
-	const char *p = "hello mr server >:)";
-	send(socket, p, strlen(p), 0);
+	// init vars
+	int valread;
+	char server_response[256] = { 0 };
+	const int n = snprintf(NULL, 0, "%lu", msg_id);
+	char buf[n+1];
+	int c = snprintf(buf, n+1, "%lu", msg_id);
+
+	// create packet for server
+	char packet[256];
+	strcpy(packet, "0 ");
+	strcat(packet, channel_name);
+	strcat(packet, " ");
+	strcat(packet, buf);
+
+	// send packet to server
+	send(socket, packet, strlen(packet), 0);
 	
-	valread = read(socket, buffer, 1024);
-	printf("!! %s>> %s\n", channel_name, buffer);
+	// receive server response
+	valread = read(socket, server_response, 256);
+
+	// parse server response
+
+	// display subroutine output
+	printf("!! %s>> %s\n", channel_name, server_response);
+
+	// end of subroutine
 	return 0;
+
 }
 
 void retrieve_messages(int socket, const char *channel_name) {
+
+	// init vars
+	int valread;
+	char server_response[256] = { 0 };
+
+	// create packet for server
+	const char *packet = "hello mr server >:)";
+
+	// send packet to server
+	send(socket, packet, strlen(packet), 0);
+	
+	// receive server response
+	valread = read(socket, server_response, 256);
+
+	// parse server response
+
+	// display subroutine output
+	printf("!! %s>> %s\n", channel_name, server_response);
+
 }
 
 void send_message(int socket, const char *channel, char *text) {
+
+	// init vars
+	int valread;
+	char server_response[256] = { 0 };
+
+	// create packet for server
+	const char *packet = "hello mr server >:)";
+
+	// send packet to server
+	send(socket, packet, strlen(packet), 0);
+	
+	// receive server response
+	valread = read(socket, server_response, 256);
+
+	// parse server response
+
+	// display confirmation
+	printf("Success!");
+
 }
 
 void help(char **argv) {

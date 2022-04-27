@@ -12,7 +12,10 @@ int main() {
 	add_message(weather, "the weather is going to be great!");
 	add_message(weather, "sunny with a high of 70F");
 
-    channel_t *news = get_channel(get_channels(), "news");
+    const char *test;
+    test = "news";
+    printf("%s\n", test);
+    channel_t *news = get_channel(get_channels(), test);
     add_message(news, "summer vacation is almost here");
     add_message(news, "yay!");
     add_message(news, ":-)");

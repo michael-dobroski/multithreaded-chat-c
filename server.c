@@ -41,26 +41,21 @@ void run_server(int sockfd, int num_threads) {
 
 			// parse and evaluate packet
 			char *ptr = strtok(packet, delim);
-			while (ptr != NULL) {
-				printf("%s\n", ptr);
-				if (strcmp(ptr, "0") == 0) { // client requests message retrieval
-					printf("wtf");
-					ptr = strtok(NULL, delim);
-					const char *channel_name;
-					channel_name = ptr;
-					printf("hi");
-					channel_t *c = get_channel(get_channels(), channel_name);
-					if (c == NULL) {
-						printf("TODO: channel does not exist\n");
-						exit(0);
-					}
-					ptr = strtok(NULL, delim);
-					char *trash;
-					long msg_id;
-					msg_id = strtoul(ptr, &trash, 10);
-					message_t *m = get_message(c, msg_id);
-					strcpy(out, m->text);
+			if (strcmp(ptr, "0") == 0) { // client requests message retrieval
+				ptr = strtok(NULL, delim);
+				const char *channel_name;
+				channel_name = ptr;
+				channel_t *c = get_channel(get_channels(), channel_name);
+				if (c == NULL) {
+					printf("TODO: channel does not exist\n");
+					exit(0);
 				}
+				ptr = strtok(NULL, delim);
+				char *trash;
+				long msg_id;
+				msg_id = strtoul(ptr, &trash, 10);
+				message_t *m = get_message(c, msg_id);
+				strcpy(out, m->text);
 			}
 
 			send(client_socket, out, strlen(out), 0);

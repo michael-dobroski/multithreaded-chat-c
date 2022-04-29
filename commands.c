@@ -6,7 +6,6 @@
 #include <stdbool.h>
 #include <assert.h>
 
-/**
- * implement the exchanges between server and client here
- * 
- */
+const char* server_parse_packet(const char *packet) {
+    return packet;
+}

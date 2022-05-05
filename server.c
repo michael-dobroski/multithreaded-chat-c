@@ -47,19 +47,25 @@ void run_server(int sockfd, int num_threads) {
 				channel_name = ptr;
 				channel_t *c = get_channel(get_channels(), channel_name);
 				if (c == NULL) {
-					printf("TODO: channel does not exist\n");
-					exit(0);
+					strcpy(out, "1");
+				} else {
+					ptr = strtok(NULL, delim);
+					char *trash;
+					long msg_id;
+					msg_id = strtoul(ptr, &trash, 10);
+					message_t *m = get_message(c, msg_id);
+					if (m == NULL) {
+						strcpy(out, "2");
+					} else {
+						strcpy(out, "0 ");
+						strcat(out, m->text);
+					}
 				}
-				ptr = strtok(NULL, delim);
-				char *trash;
-				long msg_id;
-				msg_id = strtoul(ptr, &trash, 10);
-				message_t *m = get_message(c, msg_id);
-				strcpy(out, m->text);
 			}
 
+			// return parsed packet
 			send(client_socket, out, strlen(out), 0);
-		
+
         }
     }
 }

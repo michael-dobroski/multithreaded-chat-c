@@ -35,9 +35,14 @@ int retrieve_message(int socket, const char *channel_name, message_id_t msg_id) 
 	valread = read(socket, server_response, 256);
 
 	// parse server response
-
-	// display subroutine output
-	printf("!! %s>> %s\n", channel_name, server_response);
+	if (server_response[0] == '0') {
+		memmove(server_response, server_response+2, strlen(server_response));
+		printf("!! %s>> %s\n", channel_name, server_response);
+	} else if (server_response[0] == '1') {
+		return 1;
+	} else if (server_response[0] == '2') {
+		return 2;
+	}
 
 	// end of subroutine
 	return 0;
@@ -46,23 +51,21 @@ int retrieve_message(int socket, const char *channel_name, message_id_t msg_id) 
 
 void retrieve_messages(int socket, const char *channel_name) {
 
-	// init vars
-	int valread;
-	char server_response[256] = { 0 };
-
-	// create packet for server
-	const char *packet = "hello mr server >:)";
-
-	// send packet to server
-	send(socket, packet, strlen(packet), 0);
+	int error_code;
+	error_code = retrieve_message(socket, channel_name, 0);
+	if (error_code == 1) {
+		printf("!! Channel not found\n");
+	}
+	printf("here");
+	error_code = retrieve_message(socket, channel_name, 1);
 	
-	// receive server response
-	valread = read(socket, server_response, 256);
-
-	// parse server response
-
-	// display subroutine output
-	printf("!! %s>> %s\n", channel_name, server_response);
+	// else {
+	// 	int i = 1;
+	// 	while (error_code != 2) {
+	// 		error_code = retrieve_message(socket, channel_name, i);
+	// 		i += 1;
+	// 	}
+	// }
 
 }
 
@@ -124,7 +127,13 @@ int parse_args(int socket, int argc, char **argv) {
 		
 		int msg_id = atoi(argv[4]);
 		printf("msg_id %d\n", msg_id);
-		retrieve_message(socket, channel, msg_id);
+		int error_code;
+		error_code = retrieve_message(socket, channel, msg_id);
+		if (error_code == 1) {
+			printf("!! Channel not found\n");
+		} else if (error_code == 2) {
+			printf("!! Message not found\n");
+		}
 		return 0;
 	}
 

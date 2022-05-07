@@ -22,7 +22,8 @@ void run_server(int sockfd, int num_threads) {
 	char packet[256] = { 0 };
 	int valread;
 	char delim[] = " ";
-	char out[256] = { 0 };
+	char out[4096] = { 0 };
+	char packet_copy[256] = { 0 };
 
     while(1) {
         // Accept the data packet from client and verification
@@ -35,6 +36,8 @@ void run_server(int sockfd, int num_threads) {
 
 			// read client packet
 			valread = read(client_socket, packet, 256);
+			strncpy(packet_copy, packet, sizeof(packet_copy) - 1);
+			packet_copy[sizeof(packet_copy) - 1] = '\0';
 
 			// print packet contents
 			printf("Packet contents -> %s\n", packet);
@@ -61,6 +64,40 @@ void run_server(int sockfd, int num_threads) {
 						strcat(out, m->text);
 					}
 				}
+			} else if (strcmp(ptr, "1") == 0) { // client requests entire channel retreival
+				ptr = strtok(NULL, delim);
+				const char *channel_name;
+				channel_name = ptr;
+				channel_t *c = get_channel(get_channels(), channel_name);
+				if (c == NULL) {
+					strcpy(out, "1");
+				} else {
+					strcpy(out, "");
+					int i = 0;
+					char str[5];
+					for (message_t *m = c->head; m != NULL; m = m->next) {
+						strcat(out, "\t[");
+						sprintf(str, "%d", i);
+						i++;
+						strcat(out, str);
+						strcat(out, "]: ");
+						strcat(out, m->text);
+						strcat(out, "\n");
+					}
+				}
+			} else if (strcmp(ptr, "2") == 0) {
+				ptr = strtok(NULL, delim);
+				const char *channel_name;
+				channel_name = ptr;
+				channel_t *c = get_channel(get_channels(), channel_name);
+				if (c == NULL) {
+					c = create_channel(get_channels(), channel_name);
+				}
+				const char *txt_contents;
+				txt_contents = packet_copy;
+				add_message(c, txt_contents);
+				strcpy(out, "Success!\n");
+				dump(get_channels());
 			}
 
 			// return parsed packet

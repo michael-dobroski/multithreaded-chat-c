@@ -65,12 +65,34 @@ void free_channels(channel_list_t *channels) {
 
 }
 
+char* copyString(char s[])
+{
+    int i;
+    char* s2;
+    s2 = (char*)malloc(256);
+ 
+    // Executing till null character
+    // is found
+    for (i = 0; s[i] != '\0'; i++) {
+ 
+        // Copy the character one
+        // by one from s1 to s2
+        s2[i] = s[i];
+    }
+ 
+    // Return the pointer of newly
+    // created string
+    return (char*)s2;
+}
+
 void add_message(channel_t *channel, const char *text) {
 
+	char* s2;
 	// if message list is empty, make new message and set it as head
 	if (channel->head == NULL) {
 		message_t *m = (message_t *) malloc(sizeof(message_t));
-		m->text = text;
+		s2 = copyString(text);
+		m->text = s2;
 		m->id = 0;
 		channel->last_msg = 1;
 		channel->head = m;
@@ -78,7 +100,8 @@ void add_message(channel_t *channel, const char *text) {
 	} else {
 		message_t *old_tail = channel->tail;
 		message_t *m = (message_t *) malloc(sizeof(message_t));
-		m->text = text;
+		s2 = copyString(text);
+		m->text = s2;
 		m->id = old_tail->id + 1;
 		channel->last_msg += 1;
 		old_tail->next = m;

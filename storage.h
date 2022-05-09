@@ -23,6 +23,7 @@ typedef struct channel_list {
 	channel_t *tail;
 } channel_list_t;
 
+char* copyString(char s[]);
 
 // returns a channel_list_t that contains the head and tail of the list storing the channels
 channel_list_t *get_channels();

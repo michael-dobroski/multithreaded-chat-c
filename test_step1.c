@@ -20,10 +20,10 @@ int main() {
     dump(channels);
     strcpy(foo, "yay!");
     // add_message(news, "fuck this");
-    dump(channels);
+    // dump(channels);
     // strcpy(foo, ":-)");
-    // add_message(news, foo);
-	// dump(channels);
+    add_message(news, foo);
+	dump(channels);
 
     // free_channels(get_channels());
 

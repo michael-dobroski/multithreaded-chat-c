@@ -19,7 +19,6 @@
 void run_server(int sockfd, int num_threads) {
     struct sockaddr_in cli;
     socklen_t len = sizeof(cli);
-	char packet[256] = { 0 };
 	int valread;
 	char delim[] = " ";
 	char out[4096] = { 0 };
@@ -35,6 +34,7 @@ void run_server(int sockfd, int num_threads) {
             printf("server accept the client...\n");
 
 			// read client packet
+			char packet[256] = { 0 };
 			valread = read(client_socket, packet, 256);
 			strncpy(packet_copy, packet, sizeof(packet_copy) - 1);
 			packet_copy[sizeof(packet_copy) - 1] = '\0';
@@ -93,11 +93,15 @@ void run_server(int sockfd, int num_threads) {
 				if (c == NULL) {
 					c = create_channel(get_channels(), channel_name);
 				}
+				memmove(packet_copy, packet_copy+strlen(channel_name)+3, strlen(packet_copy) - strlen(channel_name) - 3 + 1);
 				const char *txt_contents;
 				txt_contents = packet_copy;
 				add_message(c, txt_contents);
-				strcpy(out, "Success!\n");
-				dump(get_channels());
+				strcpy(out, "Successfully added message < ");
+				strcat(out, txt_contents);
+				strcat(out, " > to channel < ");
+				strcat(out, channel_name);
+				strcat(out, " >\n");
 			}
 
 			// return parsed packet
